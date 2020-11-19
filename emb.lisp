@@ -33,7 +33,7 @@ a function designator which must be called with the lock hold.")
   `(cond (*locking-function*
            (funcall *locking-function* #'(lambda () ,@body)))
           (t ,@body)))
-  
+
 (defgeneric execute-emb (name &key env generator-maker)
   (:documentation "Execute named emb code. Returns a string. Keyword parameter ENV
 to pass objects to the code. ENV must be a plist."))
@@ -72,7 +72,7 @@ to pass objects to the code. ENV must be a plist."))
 (defun pprint-emb-function (name)
   "DEBUG function. Pretty prints function form, if *DEBUG* was t
 when the function was registered."
-  (with-lock 
+  (with-lock
     (pprint (emb-function-form (gethash name *functions*)))))
 
 
@@ -178,7 +178,14 @@ like e. g. *ESCAPE-TYPE*."
         "")))
 
 (defparameter *template-tag-expand*
-  `(("\\s+@if\\s+(\\S+)\\s*"      . " (cond ((cl-emb::getf-emb \"\\1\") ")
+  `(("\\s+@if\\s+(\\S+)\\s+eq\\s+(\\S+)\\s*"      . " (cond ((equal (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@if\\s+(\\S+)\\s+matches\\s+(\\S+)\\s*"      . " (cond ((ppcre:scan \\2 (cl-emb::getf-emb \"\\1\")) ")
+    ("\\s+@if\\s+(\\S+)\\s+lt\\s+(\\S+)\\s*"      . " (cond ((< (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@if\\s+(\\S+)\\s+gt\\s+(\\S+)\\s*"      . " (cond ((> (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@if\\s+(\\S+)\\s+gte\\s+(\\S+)\\s*"      . " (cond ((>= (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@if\\s+(\\S+)\\s+lte\\s+(\\S+)\\s*"      . " (cond ((<= (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@if\\s+(\\S+)\\s+ne\\s+(\\S+)\\s*"      . " (cond ((not (equal (cl-emb::getf-emb \"\\1\") \\2)) ")
+    ("\\s+@if\\s+(\\S+)\\s*"      . " (cond ((cl-emb::getf-emb \"\\1\") ")
     ("\\s+@else\\s*"              . " ) (t ")
     ("\\s+@endif\\s*"             . " )) ")
     ("\\s+@unless\\s+(\\S+)\\s*"  . " (cond ((not (cl-emb::getf-emb \"\\1\")) ")
@@ -191,8 +198,8 @@ like e. g. *ESCAPE-TYPE*."
     ("\\s+@endrepeat\\s*"         . " ) ")
     ("\\s+@loop\\s+(\\S+)\\s*"    . " (dolist (env (cl-emb::getf-emb \"\\1\")) ")
     ("\\s+@endloop\\s*"           . " ) ")
-    ("\\s+@genloop\\s+(\\S+)\\s*" . " (let ((env) 
-                                            (%gen (funcall generator-maker :\\1 
+    ("\\s+@genloop\\s+(\\S+)\\s*" . " (let ((env)
+                                            (%gen (funcall generator-maker :\\1
                                                            (cl-emb::getf-emb \"\\1\"))))
                                            (loop
                                             (when (funcall %gen :test) (return))
@@ -269,7 +276,7 @@ is a string."
   "Emit given STRING. Escape if wanted (global or via ESCAPE keyword).
 STRING can be NIL."
   (let ((str (or string "")))
-    (case escape 
+    (case escape
       ((:html :xml)
        (escape-for-xml str))
       ((:url :uri :url-encode)
@@ -306,7 +313,7 @@ Scanners are memoized in SCANNER-HASH once they are created."
                  *emb-start-marker*
                  (funcall replacement match registers)
                  *emb-end-marker*)))
-  
+
 (defun expand-template-tags (string)
   "Expand template-tags (@if, @else, ...) to Common Lisp.
 Replacement and regex in *TEMPLATE-TAG-EXPAND*"
@@ -331,7 +338,7 @@ Replacement and regex in *TEMPLATE-TAG-EXPAND*"
 
 (defun construct-emb-function (code)
   "Builds and compiles the emb-function."
-  (let ((form 
+  (let ((form
          `,(let ((*package* *function-package*))
                 (read-from-string
                  (format nil "(lambda (&key env generator-maker name)(declare (ignorable env generator-maker))
