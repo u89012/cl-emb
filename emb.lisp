@@ -185,7 +185,19 @@ like e. g. *ESCAPE-TYPE*."
     ("\\s+@if\\s+(\\S+)\\s+gte\\s+(\\S+)\\s*"      . " (cond ((>= (cl-emb::getf-emb \"\\1\") \\2) ")
     ("\\s+@if\\s+(\\S+)\\s+lte\\s+(\\S+)\\s*"      . " (cond ((<= (cl-emb::getf-emb \"\\1\") \\2) ")
     ("\\s+@if\\s+(\\S+)\\s+ne\\s+(\\S+)\\s*"      . " (cond ((not (equal (cl-emb::getf-emb \"\\1\") \\2)) ")
+    ("\\s+@if\\s+not\\s+(\\S+)\\s*"      . " (cond ((not (cl-emb::getf-emb \"\\1\")) ")
     ("\\s+@if\\s+(\\S+)\\s*"      . " (cond ((cl-emb::getf-emb \"\\1\") ")
+
+    ("\\s+@elsif\\s+(\\S+)\\s*"                           . " ) ((cl-emb::getf-emb \"\\1\")  ")
+    ("\\s+@elsif\\s+(\\S+)\\s+eq\\s+(\\S+)\\s*"           . " ) ((equal (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+matches\\s+(\\S+)\\s*"      . " ) ((ppcre:scan \\2 (cl-emb::getf-emb \"\\1\")) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+lt\\s+(\\S+)\\s*"           . " ) ((< (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+gt\\s+(\\S+)\\s*"           . " ) ((> (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+gte\\s+(\\S+)\\s*"          . " ) ((>= (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+lte\\s+(\\S+)\\s*"          . " ) ((<= (cl-emb::getf-emb \"\\1\") \\2) ")
+    ("\\s+@elsif\\s+(\\S+)\\s+ne\\s+(\\S+)\\s*"           . " ) ((not (equal (cl-emb::getf-emb \"\\1\") \\2)) ")
+
+
     ("\\s+@else\\s*"              . " ) (t ")
     ("\\s+@endif\\s*"             . " )) ")
     ("\\s+@unless\\s+(\\S+)\\s*"  . " (cond ((not (cl-emb::getf-emb \"\\1\")) ")
