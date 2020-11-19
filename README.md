@@ -1,6 +1,50 @@
 CL-EMB:   Embedded Common Lisp
 ==============================
 
+This is a fork of the excellent and user-friendly templating tool CL-EMB that adds a few extra
+operators to make comparison and matching easy. Here are the changes:
+
+
+`@if` now can take one of the following `eq`, `ne`, `lt`, `lte`, `gt`, `gte`, `matches`
+
+The earlier ones are self explanatory, the last one matches using a regex.
+
+EXAMPLES
+--------
+
+<% @if foo %>
+yes foo
+<% @else %>
+no foo
+<% @endif %>
+
+<% @if foo eq 1%>
+foo is 1
+<% @else %>
+foo not 1
+<% @endif %>
+
+
+<% @if foo eq "works" %>
+foo works
+<% @else %>
+foo not works
+<% @endif %>
+
+<% @if foo matches "^works$" %>
+foo works
+<% @else %>
+foo not works
+<% @endif %>
+
+and so on...
+
+I might add more in the future as the need arises. Thanks to the original author (Stefan Scholl) for
+this wonderful contribution!
+
+
+==========================ORIGINAL README FROM CL-EMB FOLLOWS====================
+
 A mixture of features from eRuby and HTML::Template. You could name
 it "Yet Another LSP" (LispServer Pages) but it's a bit more than that
 and not limited to a certain server or text format.
@@ -84,7 +128,7 @@ USAGE
     Function to call to lock access to an internal hash table.
     Must accept a function designator which must be called with
     the lock hold.
-    
+
     IMPORTANT: The locking function must return the value of
     the function it calls!
 
@@ -197,7 +241,7 @@ includer. E. g. `<% @set escape=uri %>`
 Currently supported: escape (raw, xml, html, url, uri, url-encode)
 
 `@genloop` starts a special kind of loop: a generator loop. It must be
-terminated by `@endgenloop` and operates on a generator returned by the 
+terminated by `@endgenloop` and operates on a generator returned by the
 given `GENERATOR-MAKER` (see `EXECUTE-EMB`). The `GENERATOR-MAKER` gets called
 with two parameters: the key (which is the argument to `@genloop`) and the
 corresponding value in the plist. Each time in the loop the generator is
@@ -262,7 +306,7 @@ CL-USER> (let ((emb:*escape-type* :html))
 CL-USER> (emb:register-emb "test6" "1. <% @with one %>BAZ: <% @var baz %><% @endwith%>
 2. <% @with two %>BAZ: <% @var baz %><% @endwith%>")
 #<CL-EMB::EMB-FUNCTION {9916EB1}>
-CL-USER> (emb:execute-emb "test6" :env '(:one (:baz "first") 
+CL-USER> (emb:execute-emb "test6" :env '(:one (:baz "first")
                                          :two (:baz "second")))
 "1. BAZ: first
 2. BAZ: second"
