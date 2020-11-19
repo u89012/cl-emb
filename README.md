@@ -11,31 +11,37 @@ The earlier ones are self explanatory, the last one matches using a regex.
 
 EXAMPLES
 --------
-
+```
 <% @if foo %>
 yes foo
 <% @else %>
 no foo
 <% @endif %>
+```
 
+```
 <% @if foo eq 1%>
 foo is 1
 <% @else %>
 foo not 1
 <% @endif %>
+```
 
-
+```
 <% @if foo eq "works" %>
 foo works
 <% @else %>
 foo not works
 <% @endif %>
+```
 
+```
 <% @if foo matches "^works$" %>
 foo works
 <% @else %>
 foo not works
 <% @endif %>
+```
 
 and so on...
 
